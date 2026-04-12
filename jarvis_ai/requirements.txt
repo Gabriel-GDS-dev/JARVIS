@@ -1,0 +1,38 @@
+# ============================================================
+# DEPENDÊNCIAS DO JARVIS AI
+# Instale com: pip install -r requirements.txt
+# ============================================================
+
+# Backend / API
+fastapi==0.111.0
+uvicorn[standard]==0.30.1
+
+# Banco de dados
+sqlalchemy==2.0.30
+aiosqlite==0.20.0
+
+# Validação de dados
+pydantic==2.7.1
+pydantic-settings==2.3.0
+
+# Variáveis de ambiente
+python-dotenv==1.0.1
+
+# Requisições HTTP (comunicação com Ollama)
+requests==2.32.3
+httpx==0.27.0
+
+# Interface web (escolha uma ou instale as duas)
+gradio==4.36.1
+streamlit==1.36.0
+
+# Upload de arquivos
+python-multipart==0.0.9
+
+# Data e hora
+python-dateutil==2.9.0
+
+# Testes
+pytest==8.2.2
+pytest-asyncio==0.23.7
+httpx==0.27.0

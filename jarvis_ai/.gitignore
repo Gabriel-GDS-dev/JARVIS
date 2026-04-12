@@ -1,0 +1,55 @@
+# ============================================================
+# .gitignore — Jarvis AI
+# ============================================================
+
+# Ambiente virtual Python
+venv/
+.venv/
+env/
+ENV/
+
+# Variáveis de ambiente (NUNCA commitar o .env real)
+.env
+
+# Banco de dados local
+data/app.db
+data/*.db
+*.db
+*.sqlite3
+
+# Uploads de usuários (dados pessoais)
+data/uploads/*
+!data/uploads/.gitkeep
+
+# Logs
+data/logs/*
+!data/logs/.gitkeep
+*.log
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+*.pyo
+
+# Distribuição / packaging Python
+dist/
+build/
+*.egg-info/
+.eggs/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# Testes
+.pytest_cache/
+.coverage
+htmlcov/
+
+# MyPy
+.mypy_cache/
