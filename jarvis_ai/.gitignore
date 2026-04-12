@@ -8,48 +8,82 @@ venv/
 env/
 ENV/
 
-# Variáveis de ambiente (NUNCA commitar o .env real)
-.env
+# Arquivos executáveis e instaladores GRANDES
+*.exe
+*.msi
+*.dmg
+*.iso
+*.zip
+*.rar
+*.7z
+*.tar.gz
 
-# Banco de dados local
-data/app.db
-data/*.db
+# Modelos de IA e dados
+models/
+*.bin
+*.safetensors
+*.ck
+*.ckpt
+*.pth
+*.pt
+
+# Ollama
+ollama/
+.ollama/
+
+# Banco de dados
 *.db
+*.sqlite
 *.sqlite3
+data/*.db
 
-# Uploads de usuários (dados pessoais)
-data/uploads/*
-!data/uploads/.gitkeep
-
-# Logs
-data/logs/*
-!data/logs/.gitkeep
-*.log
-
-# Python cache
+# Python
 __pycache__/
 *.py[cod]
 *$py.class
-*.pyc
-*.pyo
-
-# Distribuição / packaging Python
-dist/
+*.so
+.Python
 build/
-*.egg-info/
+develop-eggs/
+dist/
+downloads/
+eggs/
 .eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
 
-# IDEs
+# IDE
 .vscode/
 .idea/
 *.swp
 *.swo
+*~
 .DS_Store
 
-# Testes
-.pytest_cache/
-.coverage
-htmlcov/
+# Logs
+logs/
+*.log
 
-# MyPy
-.mypy_cache/
+# Arquivos de upload
+data/uploads/*
+!data/uploads/.gitkeep
+
+# Variáveis de ambiente
+.env
+.env.local
+.env.*.local
+
+# Cache
+*.cache
+.cache/
+
+# OS
+Thumbs.db
+.DS_Store
