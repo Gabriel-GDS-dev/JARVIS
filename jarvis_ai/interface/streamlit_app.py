@@ -21,7 +21,69 @@ st.set_page_config(
 API_URL = "http://localhost:8000"
 
 
-# ── Funções auxiliares ───────────────────────────────────────
+# ── CSS customizado ───────────────────────────────────────────
+
+st.markdown(
+    """
+    <style>
+    body, .block-container {
+        background: #020617;
+        color: #e2e8f0;
+    }
+    .reportview-container .main .block-container {
+        padding-top: 1rem;
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
+    }
+    .stButton>button {
+        background-color: #2563eb;
+        color: white;
+        border: none;
+    }
+    .stButton>button:hover {
+        background-color: #1d4ed8;
+    }
+    .message-card {
+        border-radius: 24px;
+        padding: 18px 20px;
+        margin-bottom: 14px;
+        width: fit-content;
+        max-width: 72%;
+        line-height: 1.7;
+        border: 1px solid rgba(148, 163, 184, 0.15);
+    }
+    .message-user {
+        background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+        color: #ffffff;
+        margin-left: auto;
+    }
+    .message-assistant {
+        background: #111827;
+        color: #e2e8f0;
+        margin-right: auto;
+    }
+    .message-label {
+        font-size: 0.78rem;
+        color: #94a3b8;
+        margin-bottom: 10px;
+    }
+    .streamlit-expanderHeader {
+        color: #e2e8f0;
+    }
+    .css-1v0mbdj.egzxvld0 {
+        background: #020617;
+    }
+    .css-1d391kg {
+        background: #020617;
+    }
+    .sidebar .stButton>button {
+        background-color: #1e293b;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
 
 def check_api_status():
     """Verifica se a API está online."""
@@ -94,27 +156,19 @@ def get_video_editing_recommendations():
     return [
         {
             "title": "CapCut",
-            "description": "Editor rápido e gratuito para celular, ótimo para cortes curtos e usos em TikTok e Reels.",
+            "description": "Editor rápido e gratuito para celular, ideal para conteúdo curto e cortado.",
         },
         {
             "title": "DaVinci Resolve",
-            "description": "Ferramenta poderosa para edição e correção de cor, boa para quem busca qualidade profissional sem custo.",
+            "description": "Editor profissional com correção de cor avançada e controle total.",
         },
         {
             "title": "Opusclip",
-            "description": "Use para separar automaticamente clipes de vídeos mais longos e gerar cortes para redes sociais.",
-        },
-        {
-            "title": "Shotcut / OpenShot",
-            "description": "Alternativas gratuitas para edição de vídeo no desktop quando você precisa de mais controle.",
+            "description": "Automatiza cortes e gera clipes virais otimizados para redes sociais.",
         },
         {
             "title": "Mixkit / Pexels / Pixabay",
-            "description": "Bibliotecas gratuitas de vídeos, músicas e imagens para enriquecer seus conteúdos.",
-        },
-        {
-            "title": "Freesound / Artlist / Epidemic Sound",
-            "description": "Recursos de áudio e músicas para deixar seus vídeos mais profissionais. Use o gratuito e teste opções pagas quando precisar de qualidade extra.",
+            "description": "Recursos gratuitos de mídia para enriquecer seus vídeos com imagens e áudio.",
         },
     ]
 
@@ -124,24 +178,40 @@ def get_resource_recommendations():
     return [
         {
             "title": "Estratégia de conteúdo",
-            "description": "Faça lives, corte os melhores momentos e publique clipes no TikTok e YouTube Shorts.",
+            "description": "Faça lives, corte os melhores momentos e publique nos canais certos.",
         },
         {
-            "title": "Roteiro simples",
-            "description": "Defina gancho, desenvolvimento e chamada para ação em vídeos curtos para manter o público até o final.",
+            "title": "Roteiro direto",
+            "description": "Use gancho, desenvolvimento e CTA para manter o público engajado.",
         },
         {
-            "title": "Atenção ao som",
-            "description": "Use música ou efeitos leves para dar ritmo, mas mantenha o foco na narrativa principal.",
+            "title": "Som e ritmo",
+            "description": "Escolha trilhas e cortes que acompanhem a emoção do vídeo.",
         },
         {
             "title": "Identidade visual",
-            "description": "Use cores e padrões similares em todos os vídeos para facilitar a identificação do seu conteúdo.",
+            "description": "Padronize estilo, cores e tipografia para sua marca pessoal.",
         },
     ]
 
 
-# ── Inicializa o estado da sessão ────────────────────────────
+def render_message(role: str, content: str):
+    """Renderiza uma mensagem com estilo profissional."""
+    label = "Você" if role == "user" else "Jarvis"
+    css_class = "message-user" if role == "user" else "message-assistant"
+    content_html = content.replace("\n", "<br>")
+    st.markdown(
+        f"""
+        <div class="message-card {css_class}">
+            <div class="message-label">{label}</div>
+            <div>{content_html}</div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
+# ── Estado da sessão ─────────────────────────────────────────
 
 if "messages" not in st.session_state:
     st.session_state.messages = []
@@ -149,8 +219,8 @@ if "messages" not in st.session_state:
 if "conversation_id" not in st.session_state:
     st.session_state.conversation_id = None
 
-if "active_section" not in st.session_state:
-    st.session_state.active_section = "Chat"
+if "active_tab" not in st.session_state:
+    st.session_state.active_tab = "Chat"
 
 if "edit_messages" not in st.session_state:
     st.session_state.edit_messages = []
@@ -158,59 +228,80 @@ if "edit_messages" not in st.session_state:
 if "edit_conversation_id" not in st.session_state:
     st.session_state.edit_conversation_id = None
 
+if "memory_refresh" not in st.session_state:
+    st.session_state.memory_refresh = 0
+
+
+def reset_chat():
+    st.session_state.messages = []
+    st.session_state.conversation_id = None
+
+
+def reset_edit():
+    st.session_state.edit_messages = []
+    st.session_state.edit_conversation_id = None
+
 
 # ── Sidebar ──────────────────────────────────────────────────
 
 with st.sidebar:
-    st.title("🤖 Jarvis AI")
-    st.markdown("---")
-
-    st.subheader("📁 Seções")
-    st.session_state.active_section = st.radio(
-        "Escolha uma área:",
-        ["Chat", "Edição Assistida", "Recomendações"],
-        index=["Chat", "Edição Assistida", "Recomendações"].index(st.session_state.active_section),
-        key="active_section_radio",
+    st.markdown(
+        """
+        <div style="padding-bottom: 12px;">
+            <h1 style="margin: 0; font-size: 2rem; letter-spacing: -0.03em;">Jarvis AI</h1>
+            <p style="margin: 6px 0 0; color: #94a3b8; font-size: 0.95rem;">Assistente local para chat, memórias e edição de vídeo.</p>
+        </div>
+        """,
+        unsafe_allow_html=True,
     )
 
     st.markdown("---")
 
-    # Status do sistema
-    st.subheader("📡 Status do Sistema")
-    status = check_api_status()
-    if status:
-        st.success(f"API: ✅ Online")
-        ollama_status = status.get("ollama", "desconhecido")
-        if ollama_status == "ok":
-            st.success(f"Ollama: ✅ Online")
-            st.info(f"Modelo: `{status.get('model', '?')}`")
-        else:
-            st.error(f"Ollama: ❌ Offline")
-            st.warning("Execute `ollama serve` no terminal")
-    else:
-        st.error("API: ❌ Offline")
-        st.warning("Execute: `uvicorn app.main:app --reload`")
+    st.markdown("### Navegação")
+    nav_cols = st.columns([1, 1, 1])
+    modes = ["Chat", "Edição Assistida", "Recomendações"]
+    icons = ["💬", "✂️", "📌"]
+    for idx, mode in enumerate(modes):
+        if nav_cols[idx].button(f"{icons[idx]} {mode}", key=f"nav_{mode}", use_container_width=True):
+            st.session_state.active_tab = mode
+            st.experimental_rerun()
 
     st.markdown("---")
 
-    # Nova conversa
-    st.subheader("💬 Conversa")
-    if st.button("🆕 Nova Conversa", use_container_width=True):
-        st.session_state.messages = []
-        st.session_state.conversation_id = None
-        st.rerun()
+    st.markdown("### Status do sistema")
+    status = check_api_status()
+    if status:
+        st.success("API: Online")
+        if status.get("ollama") == "ok":
+            st.success("Ollama: Online")
+        else:
+            st.error("Ollama: Offline")
+            st.warning("Execute `ollama serve`")
+        st.markdown(f"**Modelo:** `{status.get('model', 'desconhecido')}`")
+    else:
+        st.error("API: Offline")
+        st.warning("Execute `uvicorn app.main:app --reload`")
 
-    # Histórico de conversas
+    st.markdown("---")
+
+    st.markdown("### Ações rápidas")
+    if st.button("Nova conversa", use_container_width=True, key="quick_reset_chat"):
+        reset_chat()
+        st.experimental_rerun()
+    if st.button("Reiniciar edição", use_container_width=True, key="quick_reset_edit"):
+        reset_edit()
+        st.experimental_rerun()
+
+    st.markdown("---")
+
+    st.markdown("### Conversas recentes")
     conversations = get_conversations()
     if conversations:
-        st.subheader("📜 Conversas Recentes")
         for conv in conversations[:5]:
             title = conv.get("title") or f"Conversa #{conv['id']}"
-            if len(title) > 30:
-                title = title[:30] + "..."
-            if st.button(f"💬 {title}", key=f"conv_{conv['id']}", use_container_width=True):
-                st.session_state.conversation_id = conv["id"]
-                # Carrega mensagens da conversa selecionada
+            if len(title) > 42:
+                title = title[:42] + "..."
+            if st.button(title, key=f"conv_{conv['id']}", use_container_width=True):
                 try:
                     resp = requests.get(f"{API_URL}/chat/conversations/{conv['id']}/messages")
                     data = resp.json()
@@ -218,119 +309,95 @@ with st.sidebar:
                         {"role": m["role"], "content": m["content"]}
                         for m in data.get("messages", [])
                     ]
-                    st.rerun()
+                    st.session_state.conversation_id = conv["id"]
+                    st.experimental_rerun()
                 except Exception:
-                    pass
+                    st.error("Erro ao carregar conversa.")
+    else:
+        st.info("Nenhuma conversa encontrada.")
 
     st.markdown("---")
 
-    # Memórias
-    st.subheader("🧠 Memórias")
-
-    # Adicionar nova memória
-    with st.expander("➕ Adicionar Memória"):
-        mem_content = st.text_area("Conteúdo:", placeholder="Ex: Prefiro respostas curtas")
-        mem_type = st.selectbox("Tipo:", ["fato", "preferencia", "tarefa", "nota"])
-        if st.button("Salvar Memória"):
+    st.markdown("### Memórias")
+    with st.expander("Adicionar memória"):
+        mem_content = st.text_area("Conteúdo", placeholder="Ex: Prefiro respostas curtas")
+        mem_type = st.selectbox("Tipo", ["fato", "preferencia", "tarefa", "nota"])
+        if st.button("Salvar memória", key="save_memory"):
             if mem_content.strip():
                 if save_memory(mem_content.strip(), mem_type):
-                    st.success("✅ Memória salva!")
-                    st.rerun()
+                    st.success("Memória salva com sucesso.")
+                    st.session_state.memory_refresh += 1
                 else:
                     st.error("Erro ao salvar memória.")
             else:
                 st.warning("Digite o conteúdo da memória.")
 
-    # Lista de memórias
     memories = get_memories()
     if memories:
         for mem in memories:
-            with st.expander(f"[{mem['memory_type']}] {mem['content'][:40]}..."):
-                st.write(mem["content"])
-                st.caption(f"Relevância: {mem['relevance']} | ID: {mem['id']}")
-                if st.button("🗑️ Deletar", key=f"del_mem_{mem['id']}"):
-                    delete_memory(mem["id"])
-                    st.rerun()
+            st.write(f"- **[{mem['memory_type']}]** {mem['content']}")
     else:
         st.info("Nenhuma memória salva ainda.")
 
     st.markdown("---")
-    st.caption("Jarvis AI v1.0 — Local & Privado")
+    st.caption("Jarvis AI — Local, completo e confiável")
 
 
-# ── Área principal ───────────────────────────────────────────
+# ── Página principal ─────────────────────────────────────────
 
-if st.session_state.active_section == "Chat":
-    st.title("💬 Converse com o Jarvis")
+st.markdown("# Jarvis AI")
+st.markdown("### Assistente local para chat, memórias e edição de vídeo.")
+st.markdown("---")
 
-    conv_label = f"Conversa #{st.session_state.conversation_id}" if st.session_state.conversation_id else "Nova Conversa"
-    st.caption(f"🗂️ {conv_label}")
+if st.session_state.active_tab == "Chat":
+    st.subheader("Chat")
+    st.write("Converse com o Jarvis e use comandos de memória como `salvar memória:` e `listar memórias`.")
+    if st.session_state.conversation_id:
+        st.info(f"Conversa ativa: #{st.session_state.conversation_id}")
 
-    # Exibe o histórico de mensagens
     for msg in st.session_state.messages:
-        with st.chat_message(msg["role"]):
-            st.markdown(msg["content"])
+        render_message(msg["role"], msg["content"])
 
-    # Campo de entrada do usuário
-    if user_input := st.chat_input("Digite sua mensagem..."):
-
-        # Exibe a mensagem do usuário imediatamente
+    user_input = st.chat_input("Digite uma mensagem para o Jarvis...")
+    if user_input:
         st.session_state.messages.append({"role": "user", "content": user_input})
-        with st.chat_message("user"):
-            st.markdown(user_input)
+        result = send_message(user_input, st.session_state.conversation_id)
+        if result:
+            reply = result["reply"]
+            st.session_state.conversation_id = result["conversation_id"]
+            st.session_state.messages.append({"role": "assistant", "content": reply})
+            st.experimental_rerun()
 
-        # Envia para a API e exibe a resposta
-        with st.chat_message("assistant"):
-            with st.spinner("Jarvis está pensando..."):
-                result = send_message(user_input, st.session_state.conversation_id)
-
-            if result:
-                reply = result["reply"]
-                st.session_state.conversation_id = result["conversation_id"]
-                st.session_state.messages.append({"role": "assistant", "content": reply})
-                st.markdown(reply)
-            else:
-                st.error("Não foi possível obter uma resposta.")
-
-elif st.session_state.active_section == "Edição Assistida":
-    st.title("🛠️ Edição Assistida")
-    st.write(
-        "Receba sugestões de cortes, ritmo, roteiro e recursos para seus vídeos. "
-        "Peça recomendações específicas para CapCut, DaVinci, Opusclip ou seu estilo de conteúdo."
-    )
-    st.info("As alterações são aplicadas imediatamente na interface. Não é preciso fechar e abrir o site de novo.")
+elif st.session_state.active_tab == "Edição Assistida":
+    st.subheader("Edição Assistida")
+    st.write("Peça ao Jarvis para sugerir melhorias de edição, cortes, ritmo e estilo de vídeo.")
+    if st.session_state.edit_conversation_id:
+        st.info(f"Sessão de edição ativa: #{st.session_state.edit_conversation_id}")
 
     for msg in st.session_state.edit_messages:
-        with st.chat_message(msg["role"]):
-            st.markdown(msg["content"])
+        render_message(msg["role"], msg["content"])
 
-    if edit_input := st.chat_input("Descreva o que você quer melhorar no seu vídeo..."):
-        st.session_state.edit_messages.append({"role": "user", "content": edit_input})
-        with st.chat_message("user"):
-            st.markdown(edit_input)
-
-        with st.chat_message("assistant"):
-            with st.spinner("Jarvis está analisando seu pedido de edição..."):
-                result = send_message(edit_input, st.session_state.edit_conversation_id)
-
+    edit_request = st.text_area("Descreva o que você quer melhorar no seu vídeo:", height=140)
+    if st.button("Enviar pedido de edição"):
+        if edit_request.strip():
+            st.session_state.edit_messages.append({"role": "user", "content": edit_request})
+            result = send_message(edit_request, st.session_state.edit_conversation_id)
             if result:
-                reply = result["reply"]
                 st.session_state.edit_conversation_id = result["conversation_id"]
-                st.session_state.edit_messages.append({"role": "assistant", "content": reply})
-                st.markdown(reply)
-            else:
-                st.error("Não foi possível obter uma resposta.")
+                st.session_state.edit_messages.append({"role": "assistant", "content": result["reply"]})
+                st.experimental_rerun()
+        else:
+            st.warning("Descreva o que você deseja melhorar.")
 
-elif st.session_state.active_section == "Recomendações":
-    st.title("📚 Recomendações de Bibliotecas e Recursos")
-    st.write(
-        "Aqui estão sugestões práticas para tornar seus vídeos mais interessantes, fáceis de editar e melhores para as redes sociais."
-    )
-
-    for item in get_video_editing_recommendations():
-        st.markdown(f"**{item['title']}** — {item['description']}")
-
-    st.markdown("---")
-    st.subheader("Dicas rápidas de conteúdo")
-    for item in get_resource_recommendations():
-        st.markdown(f"**{item['title']}** — {item['description']}")
+else:
+    st.subheader("Recomendações")
+    st.write("Sugestões práticas para bibliotecas, recursos e estratégias de vídeo.")
+    left, right = st.columns(2)
+    with left:
+        st.markdown("### Ferramentas e recursos")
+        for item in get_video_editing_recommendations():
+            st.markdown(f"**{item['title']}**\n{item['description']}")
+    with right:
+        st.markdown("### Dicas de estratégia")
+        for item in get_resource_recommendations():
+            st.markdown(f"**{item['title']}**\n{item['description']}")
