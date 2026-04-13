@@ -15,7 +15,7 @@ class ChatRepository:
     relacionadas a conversas e mensagens.
     """
 
-    def create_conversation(self, db: Session, title: str = None) -> Conversation:
+    def create_conversation(self, db: Session, title: str = None) -> Conversation: # type: ignore
         conv = Conversation(title=title or "Nova conversa")
         db.add(conv)
         db.commit()

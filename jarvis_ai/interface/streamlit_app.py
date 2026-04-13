@@ -94,7 +94,7 @@ def check_api_status():
         return None
 
 
-def send_message(message: str, conversation_id: int = None):
+def send_message(message: str, conversation_id: int = None): # type: ignore
     """Envia mensagem para a API e retorna a resposta."""
     try:
         response = requests.post(
@@ -264,7 +264,7 @@ with st.sidebar:
     for idx, mode in enumerate(modes):
         if nav_cols[idx].button(f"{icons[idx]} {mode}", key=f"nav_{mode}", use_container_width=True):
             st.session_state.active_tab = mode
-            st.experimental_rerun()
+            st.experimental_rerun() # pyright: ignore[reportAttributeAccessIssue]
 
     st.markdown("---")
 
@@ -287,10 +287,10 @@ with st.sidebar:
     st.markdown("### Ações rápidas")
     if st.button("Nova conversa", use_container_width=True, key="quick_reset_chat"):
         reset_chat()
-        st.experimental_rerun()
+        st.experimental_rerun() # type: ignore
     if st.button("Reiniciar edição", use_container_width=True, key="quick_reset_edit"):
         reset_edit()
-        st.experimental_rerun()
+        st.experimental_rerun() # type: ignore
 
     st.markdown("---")
 
@@ -310,7 +310,7 @@ with st.sidebar:
                         for m in data.get("messages", [])
                     ]
                     st.session_state.conversation_id = conv["id"]
-                    st.experimental_rerun()
+                    st.experimental_rerun() # type: ignore
                 except Exception:
                     st.error("Erro ao carregar conversa.")
     else:
@@ -361,12 +361,12 @@ if st.session_state.active_tab == "Chat":
     user_input = st.chat_input("Digite uma mensagem para o Jarvis...")
     if user_input:
         st.session_state.messages.append({"role": "user", "content": user_input})
-        result = send_message(user_input, st.session_state.conversation_id)
+        result = send_message(user_input, st.session_state.conversation_id) # type: ignore
         if result:
             reply = result["reply"]
             st.session_state.conversation_id = result["conversation_id"]
             st.session_state.messages.append({"role": "assistant", "content": reply})
-            st.experimental_rerun()
+            st.experimental_rerun() # type: ignore
 
 elif st.session_state.active_tab == "Edição Assistida":
     st.subheader("Edição Assistida")
@@ -381,11 +381,11 @@ elif st.session_state.active_tab == "Edição Assistida":
     if st.button("Enviar pedido de edição"):
         if edit_request.strip():
             st.session_state.edit_messages.append({"role": "user", "content": edit_request})
-            result = send_message(edit_request, st.session_state.edit_conversation_id)
+            result = send_message(edit_request, st.session_state.edit_conversation_id) # type: ignore
             if result:
                 st.session_state.edit_conversation_id = result["conversation_id"]
                 st.session_state.edit_messages.append({"role": "assistant", "content": result["reply"]})
-                st.experimental_rerun()
+                st.experimental_rerun() # type: ignore
         else:
             st.warning("Descreva o que você deseja melhorar.")
 

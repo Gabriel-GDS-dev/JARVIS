@@ -27,7 +27,7 @@ O **Jarvis AI** é uma IA pessoal local composta por:
 - **FastAPI** — backend e API REST
 - **Ollama** — roda modelos de linguagem (LLMs) localmente
 - **SQLite** — armazena histórico e memórias
-- **Streamlit ou Gradio** — interface web para conversar com a IA
+- **Streamlit** — interface web para conversar com a IA
 
 ---
 
@@ -102,26 +102,28 @@ O ambiente virtual isola as dependências do projeto das demais do seu sistema.
 
 ```bash
 # Cria o ambiente virtual
-python -m venv venv
+python -m venv .venv
 ```
 
 ### Passo 3 — Ative o ambiente virtual
 
 **Windows (Prompt de Comando):**
 ```cmd
-venv\Scripts\activate
+.venv\Scripts\activate
 ```
 
 **Windows (PowerShell):**
 ```powershell
-venv\Scripts\Activate.ps1
+.venv\Scripts\Activate.ps1
 ```
 > Se der erro no PowerShell, execute antes: `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser`
 
 **Linux / Mac:**
 ```bash
-source venv/bin/activate
+source .venv/bin/activate
 ```
+
+> Se você já usa `venv` em vez de `.venv`, troque `.venv` por `venv` nos comandos acima.
 
 ✅ Quando ativado, você verá `(venv)` no início da linha do terminal.
 
@@ -227,26 +229,26 @@ Abra no navegador: **http://localhost:8000/docs** — você verá a documentaç�
 **Opção A: Streamlit (recomendado)**
 ```bash
 # Ative o ambiente virtual
-source venv/bin/activate   # Linux/Mac
+source .venv/bin/activate   # Linux/Mac
 # ou
-venv\Scripts\activate      # Windows
+.venv\Scripts\activate      # Windows
 
 streamlit run interface/streamlit_app.py
 ```
 
 Acesse: **http://localhost:8501**
 
+### Execução com 1 clique (Windows)
+
+Se você estiver usando Windows, abra o arquivo `run_jarvis.bat` na raiz do projeto (`jarvis_ai`) com duplo clique.
+Isso abre duas janelas: uma executando a API FastAPI e outra executando o Streamlit.
+
+> O script detecta automaticamente se o ambiente virtual está em `.venv` ou em `venv`.
+
 No site, use a barra lateral para alternar entre:
 - **Chat** — conversa normal com o Jarvis
 - **Edição Assistida** — sugestões para cortes, roteiro e edição de vídeo
 - **Recomendações** — bibliotecas, recursos e dicas práticas para melhorar seus vídeos
-
-**Opção B: Gradio**
-```bash
-python interface/gradio_app.py
-```
-
-Acesse: **http://localhost:7860**
 
 ---
 
@@ -281,8 +283,7 @@ jarvis_ai/
 │       └── logger.py             # Sistema de logs
 │
 ├── interface/
-│   ├── streamlit_app.py          # Interface web (Streamlit)
-│   └── gradio_app.py             # Interface web alternativa (Gradio)
+│   └── streamlit_app.py          # Interface web (Streamlit)
 │
 ├── data/
 │   ├── app.db                    # Banco SQLite (criado automaticamente)
@@ -473,9 +474,9 @@ Use prefixos para organizar seus commits:
 
 ```bash
 # Ative o ambiente virtual
-source venv/bin/activate  # Linux/Mac
+source .venv/bin/activate  # Linux/Mac
 # ou
-venv\Scripts\activate     # Windows
+.venv\Scripts\activate     # Windows
 
 # Roda todos os testes
 pytest tests/ -v
@@ -508,8 +509,9 @@ pytest tests/test_memory.py -v
 
 ### ❌ "ModuleNotFoundError"
 **Solução:** O ambiente virtual não está ativo. Execute:
-- Windows: `venv\Scripts\activate`
-- Linux/Mac: `source venv/bin/activate`
+- Windows: `.venv\Scripts\activate`
+- Linux/Mac: `source .venv/bin/activate`
+> Se estiver usando `venv` em vez de `.venv`, troque `.venv` por `venv`.
 
 ### ❌ "Port 8000 already in use"
 **Solução:** Outra instância já está rodando. Use outra porta:

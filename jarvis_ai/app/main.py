@@ -22,7 +22,7 @@ app = FastAPI(
     redoc_url="/redoc",      # ReDoc disponível em http://localhost:8000/redoc
 )
 
-# ── CORS — permite que o Streamlit/Gradio acesse a API ──────
+# ── CORS — permite que a interface web acesse a API ──────
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],     # Em produção, restrinja para origens específicas

@@ -46,7 +46,7 @@ class AssistantService:
         self,
         db: Session,
         user_message: str,
-        conversation_id: int = None,
+        conversation_id: int = None, # type: ignore
     ) -> dict:
         """
         Processa uma mensagem do usuário e retorna a resposta do Jarvis.
@@ -65,8 +65,8 @@ class AssistantService:
         if command_response:
             # Salva no histórico mesmo sendo comando interno
             conv_id = conversation_id or self._get_or_create_conversation(db).id
-            msg = self._save_message(db, conv_id, ROLE_USER, user_message)
-            self._save_message(db, conv_id, ROLE_ASSISTANT, command_response)
+            msg = self._save_message(db, conv_id, ROLE_USER, user_message) # type: ignore
+            self._save_message(db, conv_id, ROLE_ASSISTANT, command_response) # type: ignore
             return {"reply": command_response, "conversation_id": conv_id, "message_id": msg.id}
 
         # --- Busca ou cria conversa ---
@@ -99,8 +99,8 @@ class AssistantService:
         reply = llm_service.chat(messages)
 
         # --- Salva as mensagens no banco ---
-        user_msg = self._save_message(db, conversation.id, ROLE_USER, user_message)
-        self._save_message(db, conversation.id, ROLE_ASSISTANT, reply)
+        user_msg = self._save_message(db, conversation.id, ROLE_USER, user_message) # type: ignore
+        self._save_message(db, conversation.id, ROLE_ASSISTANT, reply) # type: ignore
 
         logger.info(f"💬 Conversa {conversation.id} | Mensagem {user_msg.id} processada")
 
@@ -110,7 +110,7 @@ class AssistantService:
             "message_id": user_msg.id,
         }
 
-    def _get_or_create_conversation(self, db: Session, title: str = None) -> Conversation:
+    def _get_or_create_conversation(self, db: Session, title: str = None) -> Conversation: # type: ignore
         """Cria uma nova conversa no banco."""
         conversation = Conversation(title=title or "Nova conversa")
         db.add(conversation)

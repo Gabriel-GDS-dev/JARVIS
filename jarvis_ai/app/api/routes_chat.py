@@ -37,7 +37,7 @@ def send_message(request: ChatRequest, db: Session = Depends(get_db)):
         result = assistant_service.process_message(
             db=db,
             user_message=request.message,
-            conversation_id=request.conversation_id,
+            conversation_id=request.conversation_id, # type: ignore
         )
         return ChatResponse(**result)
     except ConnectionError as e:
